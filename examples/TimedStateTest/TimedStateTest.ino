@@ -28,13 +28,13 @@
 
 TimedState before_shutdown_state(120000ul);
 TimedState serial_only_state(20 * 1000);
-RepeatingTimedState blinking_state(10 * 1000, 20 * 1000, false);
+RepeatingTimedState blinking_state(1 * 1000, 2 * 1000, false);
 RepeatingTimedState led_allowed_state(20 * 1000, 5 * 1000, true);
-RepeatingTimedState log_serial_state(1, 99, true);
+RepeatingTimedState log_serial_state(1, 199, true);
 
 void setup() {
   // initialize digital pin LED_BUILTIN as an output.
-  Serial.begin(115200);
+  Serial.begin(9600);
   pinMode(LED_BUILTIN, OUTPUT);
 
   // Using forceEnter() just for testing. Normally you should use enter().
@@ -62,12 +62,19 @@ void loop() {
 
   unsigned long current_millis = millis();
   if (log_serial_state.isInside()) {
+    Serial.print("time: ");
     Serial.print(current_millis);
-    Serial.print(serial_only_state.isInside()?"true":"false");
-    Serial.print(blinking_state.isInside()?"true":"false");
-    Serial.print(led_allowed_state.isInside()?"true":"false");
+    Serial.print(", serial_only: ");
+    Serial.print(serial_only_state.isInside() ? "true" : "false");
+    Serial.print(", blinking: ");
+    Serial.print(blinking_state.isInside() ? "true" : "false");
+    Serial.print(", led_allowed: ");
+    Serial.print(led_allowed_state.isInside() ? "true" : "false");
+    Serial.print(", led: ");
     Serial.print((!serial_only_state.isInside() && blinking_state.isInside() &&
-                 led_allowed_state.isInside())?"true":"false");
+                  led_allowed_state.isInside())
+                     ? "true"
+                     : "false");
     Serial.println(":");
   }
 
